@@ -2,61 +2,84 @@ import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { config } from './src/config/env.js';
-import * as db from './src/config/db.js';
+import pool from './src/config/db.js';
 import apiRoutes from './src/routes/api.js';
 import { initSocket } from './src/services/socketService.js';
-import { startFailSafeJob } from './src/services/cronService.js';
+import { failSafeCheck } from './src/services/cronService.js';
 
 const app = express();
-const httpServer = createServer(app);
-
-// Middleware
-app.use(cors({ origin: config.corsOrigin, credentials: true }));
+app.use(cors({
+  origin: config.CORS_ORIGIN,
+  credentials: true
+}));
 app.use(express.json());
 
-// Routes
+// Load Routes
 app.use('/api', apiRoutes);
 
 // Health Check
 app.get('/health', async (req, res) => {
   try {
-    await db.query('SELECT 1');
-    res.json({ status: 'ok', database: 'connected' });
+    await pool.query('SELECT 1');
+    return res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      database: 'connected',
+      websocket: 'active'
+    });
   } catch (err) {
-    res.status(500).json({ status: 'error', database: 'disconnected' });
+    return res.status(500).json({
+      status: 'error',
+      timestamp: new Date().toISOString(),
+      database: 'disconnected',
+      error: err.message
+    });
   }
 });
 
-// Initialize Socket
-initSocket(httpServer, config.corsOrigin);
+const server = createServer(app);
 
-// Start Server
+// Initialize Socket
+initSocket(server, config.CORS_ORIGIN);
+
+// Start Background Job
+setInterval(failSafeCheck, 60 * 60 * 1000);
+failSafeCheck();
+
+const PORT = config.PORT;
+
 async function start() {
   try {
-    await db.query('SELECT NOW()'); 
+    await pool.query('SELECT NOW()');
     console.log('✓ Database connected');
     
-    httpServer.listen(config.port, () => {
-      console.log(`✓ Server running on port ${config.port}`);
-      startFailSafeJob();
+    server.listen(PORT, () => {
+      console.log('✓ Server running on port', PORT);
+      console.log(`✓ Health: http://localhost:${PORT}/health`);
+      console.log('✓ WebSocket enabled');
     });
   } catch (err) {
-    console.error('✗ Startup failed:', err);
+    console.error('✗ Failed to start server:', err);
     process.exit(1);
   }
 }
 
-// Graceful Shutdown
-const shutdown = async () => {
-  console.log('Shutting down...');
-  httpServer.close(async () => {
-    await db.end();
-    console.log('Connections closed');
+start();
+
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM received. Shutting down gracefully...');
+  server.close(() => {
+    pool.end();
+    console.log('Closed connections');
     process.exit(0);
   });
-};
+});
 
-process.on('SIGTERM', shutdown);
-process.on('SIGINT', shutdown);
-
-start();
+process.on('SIGINT', async () => {
+  console.log('SIGINT received. Shutting down gracefully...');
+  server.close(() => {
+    pool.end();
+    console.log('Closed connections');
+    process.exit(0);
+  });
+});

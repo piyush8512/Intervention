@@ -1,14 +1,14 @@
 import express from 'express';
 import * as studentController from '../controllers/studentController.js';
-// Import other controllers...
+import * as interventionController from '../controllers/interventionController.js';
 
 const router = express.Router();
 
-// Student Routes
 router.post('/daily-checkin', studentController.dailyCheckIn);
+router.post('/assign-intervention', interventionController.assignIntervention);
 router.get('/student-status/:id', studentController.getStudentStatus);
-
-// Intervention Routes (Placeholders for the refactoring)
-// router.post('/assign-intervention', interventionController.assignIntervention);
+router.post('/complete-intervention', interventionController.completeIntervention);
+router.post('/students', studentController.createStudent);
+router.get('/students', studentController.getAllStudents);
 
 export default router;
