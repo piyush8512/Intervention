@@ -30,7 +30,7 @@ export function useStudent(studentId: string | undefined) {
   useEffect(() => {
     if (!studentId) return;
 
-    socketRef.current = io(BACKEND, { transports: ["websocket"] });
+    socketRef.current = io(BACKEND, { transports: ["websocket"],forceNew: true, });
 
     socketRef.current.on("connect", () => {
       socketRef.current.emit("join", studentId);
