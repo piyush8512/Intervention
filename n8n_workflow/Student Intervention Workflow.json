@@ -19,7 +19,7 @@
     },
     {
       "parameters": {
-        "sendTo": "prajapatipiyush851@gmail.com",
+        "sendTo": "vibhor.gautam@alcovia.life",
         "subject": "=Student Needs Intervention: {{ $json.body.student_name }}",
         "message": "=<h2>🚨 Intervention Needed</h2>\n\n<p><b>Name:</b> {{ $json.body.student_name }}</p>\n<p><b>Email:</b> {{ $json.body.student_email }}</p>\n<p><b>Quiz Score:</b> {{ $json.body.quiz_score }}</p>\n<p><b>Focus Minutes:</b> {{ $json.body.focus_minutes }}</p>\n\n<p>Click the link below to assign a remedial task:</p>\n\n<a href=\"https://piyush851.app.n8n.cloud/webhook/mentor-approve?student_id={{ $json.body.student_id }}\">\n👉 Approve Intervention\n</a>",
         "options": {}
