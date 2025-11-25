@@ -1,0 +1,164 @@
+{
+  "name": "Student Intervention Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "student-failed",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        352,
+        736
+      ],
+      "id": "d76d8e3c-d2c3-4de3-949e-9299c7e116d1",
+      "name": "Webhook",
+      "webhookId": "968257a6-3dad-4dea-b791-55c2bd5a4599"
+    },
+    {
+      "parameters": {
+        "sendTo": "prajapatipiyush851@gmail.com",
+        "subject": "=Student Needs Intervention: {{ $json.body.student_name }}",
+        "message": "=<h2>🚨 Intervention Needed</h2>\n\n<p><b>Name:</b> {{ $json.body.student_name }}</p>\n<p><b>Email:</b> {{ $json.body.student_email }}</p>\n<p><b>Quiz Score:</b> {{ $json.body.quiz_score }}</p>\n<p><b>Focus Minutes:</b> {{ $json.body.focus_minutes }}</p>\n\n<p>Click the link below to assign a remedial task:</p>\n\n<a href=\"https://piyush851.app.n8n.cloud/webhook/mentor-approve?student_id={{ $json.body.student_id }}\">\n👉 Approve Intervention\n</a>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        736
+      ],
+      "id": "1d48b08f-521e-4cd0-9370-b711cd2a25ca",
+      "name": "Send a message",
+      "webhookId": "2309d6fa-fdf8-48c7-bc97-2370a122eb3a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "x0aU3IfrpuF3qazU",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "mentor-approve",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        352,
+        960
+      ],
+      "id": "b7b899d5-0381-4ec1-9dab-ddba72297419",
+      "name": "Webhook1",
+      "webhookId": "883ae9cc-7310-44da-bcc6-4464534d77ee"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://intervention-production.up.railway.app/api/assign-intervention",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "student_id",
+              "value": "={{ $json.query.student_id }}"
+            },
+            {
+              "name": "task_description",
+              "value": "Read Chapter 4"
+            },
+            {
+              "name": "assigned_by",
+              "value": "mentor"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        576,
+        960
+      ],
+      "id": "69ae9796-c9e2-4777-bec8-fc7066f44749",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Intervention Assigned</title>\n<style>\n  body {\n    background: #f5f7fa;\n    font-family: Arial, sans-serif;\n    text-align: center;\n    padding: 50px;\n  }\n  .card {\n    background: white;\n    padding: 30px;\n    margin: auto;\n    width: 350px;\n    border-radius: 12px;\n    box-shadow: 0 4px 20px rgba(0,0,0,0.1);\n  }\n  h2 {\n    color: #007AFF;\n  }\n  p {\n    font-size: 16px;\n    color: #333;\n  }\n  .success {\n    font-size: 50px;\n    margin-bottom: 20px;\n  }\n</style>\n</head>\n<body>\n\n<div class=\"card\">\n  <div class=\"success\">✅</div>\n  <h2>Intervention Approved</h2>\n  <p>You have successfully assigned the remedial task.</p>\n  <p>The student will receive the update instantly.</p>\n</div>\n\n</body>\n</html>",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "04c3b129-176e-4a15-bd94-637b9292f1c8",
+      "name": "mentor-approve",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        800,
+        960
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "mentor-approve",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c9ecc1e8-c446-491d-ab86-c98150457a0e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c68b1dd5304a7a87bafcfeb6cabf9b53fbbfd9a278c2079449b8e1af30192ca"
+  },
+  "id": "qiCnbjTsr8n47T2I",
+  "tags": []
+}

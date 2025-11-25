@@ -1,5 +1,5 @@
 
-import { useLocalSearchParams, useRouter } from "expo-router"; // <--- 1. Import useRouter
+import { useLocalSearchParams, useRouter } from "expo-router"; 
 import {
   View,
   Text,
@@ -14,14 +14,14 @@ import { useEffect } from "react";
 
 export default function Remedial() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter(); // <--- 2. Initialize router
+  const router = useRouter(); 
   const { student, task, loadStatus } = useStudent(id);
 
-  // --- 3. AUTO-REDIRECT: Watch for status change ---
-  // If the status becomes 'normal' (via Socket or API), go to the Normal screen automatically
+  
+  
   useEffect(() => {
     if (student?.status === "normal") {
-      // Use 'replace' so the user can't swipe back to this remedial screen
+      
       router.replace(`/student/normal?id=${id}`);
     }
   }, [student?.status]);
@@ -30,14 +30,14 @@ export default function Remedial() {
     try {
       const res = await completeIntervention(id!);
 
-      // Optional: Show success briefly
+      
       Alert.alert("Great Job!", "Intervention marked as complete.");
 
-      // Force a status refresh just in case socket is slow
+      
       await loadStatus();
 
-      // The useEffect above will handle the navigation when status changes,
-      // but we can also force it here to be instant:
+      
+      
       router.replace(`/student/normal?id=${id}`);
     } catch (error) {
       Alert.alert("Error", "Failed to complete intervention");
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   taskLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1976D2",
+    color: "#000000ff",
     marginBottom: 8,
   },
   taskText: {
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
   },
   button: {
-    backgroundColor: "#34C759",
+    backgroundColor: "#000000ff",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",

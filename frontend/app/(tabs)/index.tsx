@@ -1,6 +1,3 @@
-// ============================================
-// 2. frontend/app/(tabs)/index.tsx
-// ============================================
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -105,7 +102,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#000000ff",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
@@ -124,10 +121,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#007AFF",
+    borderColor: "#000000ff",
   },
   secondaryButtonText: {
-    color: "#007AFF",
+    color: "#000000ff",
     fontSize: 16,
     fontWeight: "600",
   },
