@@ -9,7 +9,7 @@
 
 ## 📹 Video Walkthrough
 
-🎥 **[Watch Demo Video (5 min)](https://loom.com/share/your-video-id)**
+🎥 **[Watch Demo Video (5 min)](https://www.loom.com/share/49d3f7cc4f00424a848b6987665b557b)**
 
 Shows complete flow: Student fails → App locks → Mentor notified → Task assigned → App unlocks in real-time
 
