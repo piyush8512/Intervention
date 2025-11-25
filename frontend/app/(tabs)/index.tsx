@@ -45,7 +45,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Student Intervention Portal</Text>
+        <Text style={styles.title}>Student </Text>
         <Text style={styles.subtitle}>Enter your Student ID to continue</Text>
 
         <TextInput
